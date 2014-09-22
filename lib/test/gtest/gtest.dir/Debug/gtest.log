@@ -1,0 +1,16 @@
+﻿Compilación iniciada a las 19/09/2014 19:19:25.
+     1>Proyecto "D:\Projects\eventually\lib\test\gtest\gtest.vcxproj" en el nodo 2 (Build destinos).
+     1>CustomBuild:
+         Building Custom Rule D:/Projects/eventually/lib/test/gtest/CMakeLists.txt
+         CMake does not need to re-run because D:\Projects\eventually\lib\test\gtest\CMakeFiles\generate.stamp is up-to-date.
+       ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ID:\Projects\eventually\lib\test\gtest\include /ID:\Projects\eventually\lib\test\gtest /Zi /nologo /W4 /WX /Od /Ob0 /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D WIN32 /D _WINDOWS /D _UNICODE /D UNICODE /D WIN32 /D _WIN32 /D STRICT /D WIN32_LEAN_AND_MEAN /D GTEST_HAS_PTHREAD=0 /D _HAS_EXCEPTIONS=1 /D "CMAKE_INTDIR=\"Debug\"" /D _UNICODE /D UNICODE /Gm- /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /GR /Fo"gtest.dir\Debug\\" /Fd"gtest.dir\Debug\vc120.pdb" /Gd /TP /wd4127 /wd4251 /wd4275 /analyze- /errorReport:prompt  -J "src\gtest-all.cc"
+         gtest-all.cc
+       Lib:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"D:\Projects\eventually\bin\Debug\gtest.lib" /NOLOGO "gtest.dir\Debug\gtest-all.obj"
+         gtest.vcxproj -> D:\Projects\eventually\bin\Debug\gtest.lib
+     1>Compilación del proyecto terminada "D:\Projects\eventually\lib\test\gtest\gtest.vcxproj" (Build destinos).
+
+Compilación correcta.
+
+Tiempo transcurrido 00:00:01.48
