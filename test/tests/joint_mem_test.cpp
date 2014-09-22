@@ -19,10 +19,10 @@ struct test_struct1 : public joint_mem
 
     test_struct1():
 #ifdef _MSC_VER
-	// visual studio fails to resolve braces here
+    // visual studio fails to resolve braces here
     joint_mem(init_array_defs({member1, member2}))
 #else
-	joint_mem{member1, member2}
+    joint_mem{member1, member2}
 #endif
     {
     }
@@ -56,10 +56,10 @@ TEST(joint_mem, basic2) {
 
 TEST(joint_mem, multiple) {
 
-	test_struct2 struc;
+    test_struct2 struc;
     struc.mem = joint_mem{
-    	{ struc.member1, 2 },
-    	{ struc.member2, 10 }
+        { struc.member1, 2 },
+        { struc.member2, 10 }
     };
 
     auto ptr = struc.mem.data<test_member1>();

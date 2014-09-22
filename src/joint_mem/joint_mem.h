@@ -28,14 +28,14 @@ class joint_mem_alloc
 {
 public:
     typedef joint_mem_array_def array_def;
-	typedef std::initializer_list<array_def> init_array_defs;
+    typedef std::initializer_list<array_def> init_array_defs;
     typedef joint_mem_unit unit;
 private:
     typedef std::vector<unit> vector;
     typedef std::unique_ptr<vector> vector_ptr;
     vector_ptr _data;
 
-	static size_t size_of(init_array_defs defs)
+    static size_t size_of(init_array_defs defs)
     {
         size_t size = 0;
         for(const array_def& def : defs)
@@ -45,7 +45,7 @@ private:
         return size;
     }
 
-	static void assign(unit* ptr, init_array_defs defs)
+    static void assign(unit* ptr, init_array_defs defs)
     {
         for(const array_def& def : defs)
         {
@@ -54,7 +54,7 @@ private:
         }
     }
 
-	void reserve(init_array_defs defs)
+    void reserve(init_array_defs defs)
     {
         _data->resize(size_of(defs));
         assign(_data->data(), defs);
@@ -73,7 +73,7 @@ public:
     {
     }
 
-	joint_mem_alloc(init_array_defs defs) :
+    joint_mem_alloc(init_array_defs defs) :
     _data(new vector(Alloc()))
     {
         reserve(defs);
@@ -131,7 +131,7 @@ public:
     {
     }
 
-	joint_mem(init_array_defs defs) :
+    joint_mem(init_array_defs defs) :
     joint_mem_alloc(defs)
     {
     }
