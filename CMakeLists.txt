@@ -6,11 +6,7 @@ set( CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin )
 
 project(joint_mem)
 
-ADD_DEFINITIONS(
-    -std=c++0x
-    -Wall
-    -Wno-unknown-pragmas
-)
+ADD_DEFINITIONS(-std=c++0x)
 
 set(JOINT_MEM_TESTS_DIR "test/tests")
 file(GLOB_RECURSE JOINT_MEM_TESTS

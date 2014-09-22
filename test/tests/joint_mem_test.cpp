@@ -18,7 +18,12 @@ struct test_struct1 : public joint_mem
     test_member2* member2;
 
     test_struct1():
-    joint_mem{member1, member2}
+#ifdef _MSC_VER
+	// visual studio fails to resolve braces here
+    joint_mem(init_array_defs({member1, member2}))
+#else
+	joint_mem{member1, member2}
+#endif
     {
     }
 };

@@ -11,49 +11,50 @@ typedef uint8_t joint_mem_unit;
 
 struct joint_mem_array_def
 {
-	void*& ptr;
-	size_t size;
-	size_t num;
+    void*& ptr;
+    size_t size;
+    size_t num;
 
-	template<typename Element>
-	joint_mem_array_def(Element*& ptr, size_t num=1):
-	ptr(reinterpret_cast<void*&>(ptr)),
-	size(sizeof(Element)), num(num)
-	{
-	}
+    template<typename Element>
+    joint_mem_array_def(Element*& ptr, size_t num=1):
+    ptr(reinterpret_cast<void*&>(ptr)),
+    size(sizeof(Element)), num(num)
+    {
+    }
 };
 
 template<typename Alloc = std::allocator<joint_mem_unit>>
 class joint_mem_alloc
 {
 public:
-	typedef joint_mem_array_def array_def;
+    typedef joint_mem_array_def array_def;
+	typedef std::initializer_list<array_def> init_array_defs;
     typedef joint_mem_unit unit;
 private:
-	typedef std::vector<unit> vector;
+    typedef std::vector<unit> vector;
     typedef std::unique_ptr<vector> vector_ptr;
     vector_ptr _data;
 
-    static size_t size_of(std::initializer_list<array_def> defs)
+	static size_t size_of(init_array_defs defs)
     {
-    	size_t size = 0;
-    	for(const array_def& def : defs)
-    	{
-    		size += def.size*def.num;
-    	}
-    	return size;
+        size_t size = 0;
+        for(const array_def& def : defs)
+        {
+            size += def.size*def.num;
+        }
+        return size;
     }
 
-    static void assign(unit* ptr, std::initializer_list<array_def> defs)
+	static void assign(unit* ptr, init_array_defs defs)
     {
-    	for(const array_def& def : defs)
-    	{
-    		def.ptr = ptr;
-    		ptr += def.size*def.num;
-    	}
+        for(const array_def& def : defs)
+        {
+            def.ptr = ptr;
+            ptr += def.size*def.num;
+        }
     }
 
-    void reserve(std::initializer_list<array_def> defs)
+	void reserve(init_array_defs defs)
     {
         _data->resize(size_of(defs));
         assign(_data->data(), defs);
@@ -72,14 +73,13 @@ public:
     {
     }
 
-    joint_mem_alloc(std::initializer_list<array_def> defs):
+	joint_mem_alloc(init_array_defs defs) :
     _data(new vector(Alloc()))
     {
         reserve(defs);
     }
 
-    joint_mem_alloc(const Alloc& alloc,
-        std::initializer_list<array_def> defs):
+    joint_mem_alloc(const Alloc& alloc, init_array_defs defs) :
     _data(new vector(alloc))
     {
         reserve(defs);
@@ -131,7 +131,7 @@ public:
     {
     }
 
-    joint_mem(std::initializer_list<array_def> defs):
+	joint_mem(init_array_defs defs) :
     joint_mem_alloc(defs)
     {
     }
