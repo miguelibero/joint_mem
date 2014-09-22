@@ -5,74 +5,58 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
+#include <initializer_list>
 
 typedef uint8_t joint_mem_unit;
 
-template<typename Element>
 struct joint_mem_array_def
 {
-	Element*& ptr;
+	void*& ptr;
 	size_t size;
+	size_t num;
 
-	/*
-	joint_mem_array_def(Element*& ptr, size_t size=1):
-	ptr(ptr), size(size)
+	template<typename Element>
+	joint_mem_array_def(Element*& ptr, size_t num=1):
+	ptr(reinterpret_cast<void*&>(ptr)),
+	size(sizeof(Element)), num(num)
 	{
 	}
-	*/
 };
 
 template<typename Alloc = std::allocator<joint_mem_unit>>
 class joint_mem_alloc
 {
 public:
-	template <typename Element>
-	using array_def = joint_mem_array_def<Element>;
+	typedef joint_mem_array_def array_def;
     typedef joint_mem_unit unit;
 private:
 	typedef std::vector<unit> vector;
     typedef std::unique_ptr<vector> vector_ptr;
     vector_ptr _data;
 
-    template<typename Element, typename... Elements>
-    size_t size_of(const array_def<Element>& def,
-        const array_def<Elements>&... defs)
+    static size_t size_of(std::initializer_list<array_def> defs)
     {
-        return size_of(def)+size_of(defs...);
+    	size_t size = 0;
+    	for(const array_def& def : defs)
+    	{
+    		size += def.size*def.num;
+    	}
+    	return size;
     }
 
-    template<typename Element>
-    size_t size_of(const array_def<Element>& def)
+    static void assign(unit* ptr, std::initializer_list<array_def> defs)
     {
-        return def.size*sizeof(Element);
+    	for(const array_def& def : defs)
+    	{
+    		def.ptr = ptr;
+    		ptr += def.size*def.num;
+    	}
     }
 
-    template<typename Element, typename... Elements>
-    void assign(unit* ptr, const array_def<Element>& def,
-        const array_def<Elements>&... defs)
+    void reserve(std::initializer_list<array_def> defs)
     {
-        assign(ptr, def);
-        assign(ptr+size_of(def), defs...);
-    }
-
-    template<typename Element>
-    void assign(unit* ptr, const array_def<Element>& def)
-    {
-        def.ptr = reinterpret_cast<Element*>(ptr);
-    }
-
-    template<typename... Elements>
-    void reserve(const array_def<Elements>&... defs)
-    {
-        _data->resize(size_of(defs...));
-        assign(_data->data(), defs...);
-    }
-
-    template<typename Element, typename... Elements>
-    void reserve(Element*& elm, Elements*&... elms)
-    {
-        reserve(array_def<Element>{elm, 1},
-            array_def<Element>{elms, 1}...);
+        _data->resize(size_of(defs));
+        assign(_data->data(), defs);
     }
 
     joint_mem_alloc(const joint_mem_alloc& that) = delete;
@@ -88,36 +72,17 @@ public:
     {
     }
 
-    template<typename Element, typename... Elements>
-    joint_mem_alloc(const array_def<Element>& elm,
-        const array_def<Elements>&... elms):
+    joint_mem_alloc(std::initializer_list<array_def> defs):
     _data(new vector(Alloc()))
     {
-        reserve(elm, elms...);
+        reserve(defs);
     }
 
-    template<typename Element, typename... Elements>
     joint_mem_alloc(const Alloc& alloc,
-        const array_def<Element>& elm,
-        const array_def<Elements>&... elms):
+        std::initializer_list<array_def> defs):
     _data(new vector(alloc))
     {
-        reserve(elm, elms...);
-    }
-
-    template<typename Element, typename... Elements>
-    joint_mem_alloc(Element*& elm, Elements*&... elms):
-    _data(new vector(Alloc()))
-    {
-        reserve(elm, elms...);
-    }
-
-    template<typename Element, typename... Elements>
-    joint_mem_alloc(const Alloc& alloc,
-    	Element*& elm, Elements*&... elms):
-    _data(new vector(alloc))
-    {
-        reserve(elm, elms...);
+        reserve(defs);
     }
 
     joint_mem_alloc(joint_mem_alloc&& that):
@@ -166,16 +131,8 @@ public:
     {
     }
 
-    template<typename Element, typename... Elements>
-    joint_mem(const array_def<Element>& elm,
-        const array_def<Elements>&... elms):
-    joint_mem_alloc(elm, elms...)
-    {
-    }
-
-    template<typename Element, typename... Elements>
-    joint_mem(Element*& elm, Elements*&... elms):
-    joint_mem_alloc(elm, elms...)
+    joint_mem(std::initializer_list<array_def> defs):
+    joint_mem_alloc(defs)
     {
     }
 
