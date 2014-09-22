@@ -8,31 +8,27 @@ C++11 that will alloc and dealloc memory for a list of pointers in
 the way he was doing in [this slide](http://www.youtube.com/watch?v=TH9VCN6UkyQ&t=65m51s), but using the RAII idiom which he doesn't like (sorry, I know it's not
 the point of the video).
 
-To see how it works, read the tests, but it's more or less this:
+To see how it works, read the tests.
+Using this class, the slide would look like this:
 
 ```c++
 #include <joint_mem/joint_mem.h>
 
-struct test_member1 {
-    int a;
-};
+struct Mesh {
+	joint_mem memory_block;
 
-struct test_member2 {
-    double b;
-};
+	Vector3* positions = NULL;
+	int* indices = NULL;
+	Vector2* uvs = NULL;
 
-struct test_struct2 {
-    test_member1* member1;
-    test_member2* member2;
-    joint_mem mem;
-};
+	int num_indices = 0;
+	int num_vertices = 0;
+}
 
-test_struct2 struc;
-// this will alloc 2*member1
-// and 10*member2 consecutive memory
-// and dealloc it when struc is destroyed
-struc.mem = joint_mem{
-	{ struc.member1, 2 },
-	{ struc.member2, 10 }
+Mesh mesh;
+mesh.memory_block = joint_mem{
+	{ mesh.positions, mesh.num_vertices },
+	{ mesh.indices, mesh.num_indices },
+	{ mesh.uvs, mesh.num_vertices }
 };
 ```
